@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS products (
     category_id INT NOT NULL,
     name VARCHAR(150) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
+    stock INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(categories_id) ON DELETE CASCADE,
     INDEX idx_category (category_id)
@@ -37,7 +38,6 @@ CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(50) DEFAULT 'Pending',
     total DECIMAL(10, 2) NOT NULL DEFAULT 0,
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
     INDEX idx_customer (customer_id)
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     INDEX idx_order (order_id),
     INDEX idx_product (product_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -63,10 +63,10 @@ INSERT INTO categories (name) VALUES ('Clothing');
 INSERT INTO categories (name) VALUES ('Books');
 
 -- Products
-INSERT INTO products (category_id, name, price) VALUES (1, 'Laptop', 999.99);
-INSERT INTO products (category_id, name, price) VALUES (1, 'Mouse', 29.99);
-INSERT INTO products (category_id, name, price) VALUES (2, 'T-Shirt', 19.99);
-INSERT INTO products (category_id, name, price) VALUES (3, 'Programming Guide', 45.00);
+INSERT INTO products (category_id, name, price, stock) VALUES (1, 'Laptop', 999.99, 5);
+INSERT INTO products (category_id, name, price, stock) VALUES (1, 'Mouse', 29.99, 25);
+INSERT INTO products (category_id, name, price, stock) VALUES (2, 'T-Shirt', 19.99, 50);
+INSERT INTO products (category_id, name, price, stock) VALUES (3, 'Programming Guide', 45.00, 10);
 
 -- Customers
 INSERT INTO customers (name, email, phone) VALUES ('John Doe', 'john@example.com', '555-1234');

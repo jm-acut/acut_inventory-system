@@ -8,7 +8,6 @@ $products = $conn->query("SELECT id, name, price FROM products ORDER BY name");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customer_id = (int)$_POST['customer_id'];
-    $status = 'Pending';
     $items = $_POST['product_id'] ?? [];
     $qtys = $_POST['quantity'] ?? [];
 
@@ -20,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->begin_transaction();
 
         // create order (total temporarily 0)
-        $stmt = $conn->prepare("INSERT INTO orders (customer_id, status, total) VALUES (?, ?, ?)");
-        $stmt->bind_param('isd', $customer_id, $status, $total);
+        $stmt = $conn->prepare("INSERT INTO orders (customer_id, total) VALUES (?, ?)");
+        $stmt->bind_param('id', $customer_id, $total);
         $stmt->execute();
         $order_id = $stmt->insert_id;
         $stmt->close();
@@ -55,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt2->execute(); $stmt2->close();
 
         $conn->commit();
-        header('Location: view_order.php?id=' . $order_id);
+        header('Location: view_orders.php?id=' . $order_id);
         exit;
     } else {
         $error = "Select a customer and at least one product with quantity.";
